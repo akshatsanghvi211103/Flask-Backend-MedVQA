@@ -34,7 +34,7 @@ def answer_question():
     user_question = request.json.get('question')
     selected_image = request.json.get('selectedImage')
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_dir, 'src', 'components', 'data.json')
+    file_path = os.path.join(current_dir, 'data.json')
     data = load_data(file_path)
     print(selected_image, "selected_image")
     answer = get_answer(user_question, selected_image, data)
