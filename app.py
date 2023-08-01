@@ -18,6 +18,8 @@ def find_best_match(user_question, questions):
     return best_match[0] if best_match else None
 
 def get_answer(user_question, selected_image, data):
+    if user_question is "":
+        return "Please enter a question"
     for image_data in data['images']:
         if image_data['image'] == selected_image:
             questions = [item['question'] for item in image_data['questions']]
