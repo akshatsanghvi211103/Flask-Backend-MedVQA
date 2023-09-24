@@ -1,12 +1,15 @@
 import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 import os
+import spacy
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 CORS(app)
+
+nlp = spacy.load("en_core_web_sm")
 
 def load_data(file_path):
     with open(file_path, 'r') as file:
@@ -14,11 +17,28 @@ def load_data(file_path):
     return data
 
 def find_best_match(user_question, questions):
-    best_match = process.extractOne(user_question, questions, scorer=fuzz.ratio)
-    return best_match[0] if best_match else None
+    sentence_embeddings = []
+    for sentence in [user_question] + questions:
+        tokens = nlp(sentence)
+        sentence_vector = np.mean([token.vector for token in tokens], axis=0)
+        sentence_embeddings.append(sentence_vector)
+    
+    # Calculate cosine similarity between the specific sentence and others
+    similarity_scores = cosine_similarity([sentence_embeddings[0]], sentence_embeddings[1:])
+    
+    # Find the index of the most similar sentence
+    most_similar_index = np.argmax(similarity_scores)
+    
+    # Get the most similar sentence
+    closest_sentence = questions[most_similar_index]
+    
+    return closest_sentence
+    
+
 
 def get_answer(user_question, selected_image, data):
-    if user_question is "":
+    print(user_question)
+    if user_question == "":
         return "Please enter a question"
     for image_data in data['images']:
         if image_data['image'] == selected_image:
