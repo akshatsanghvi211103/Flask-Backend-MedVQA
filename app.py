@@ -83,6 +83,8 @@ def answer_question():
 
 @app.route('/api/tags', methods=['POST'])
 def tagToImage():
+    # console.log("hi")
+    print("hi")
     userTag = request.json.get('userInput')
     current_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(current_dir, 'data.json')
