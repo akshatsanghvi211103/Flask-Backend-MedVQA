@@ -2,14 +2,14 @@ import json
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os
+# import os
 import spacy
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 
 # installing spacy
-os.system("python -m spacy download en_core_web_sm")
+# os.system("python -m spacy download en_core_web_sm")
 
 app = Flask(__name__)
 CORS(app)
