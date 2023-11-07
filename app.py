@@ -50,29 +50,6 @@ def get_answer(user_question, selected_image, data):
 
     return "Please select and image first"
 
-def tag_similarity(tag_set1, tag_set2):
-    max_similarity = 0
-    for tag1 in tag_set1:
-        for tag2 in tag_set2:
-            doc1 = nlp(tag1.lower())
-            doc2 = nlp(tag2.lower())
-            similarity = doc1.similarity(doc2)
-            if similarity > max_similarity:
-                max_similarity = similarity
-    return max_similarity
-
-def getImages(userTag, data):
-    image_similarity = {}
-    for image in data["images"]:
-        image_id = image["image"]
-        image_tags = image["tags"]
-        similarity = tag_similarity([userTag], image_tags)
-        image_similarity[image_id] = similarity
-    
-    sorted_images = sorted(image_similarity.items(), key=lambda x: x[1], reverse=True)
-    top_3_images = sorted_images[:3]
-    return top_3_images
-
 
 @app.route('/api/answer', methods=['POST'])
 def answer_question():
@@ -85,17 +62,6 @@ def answer_question():
     answer = get_answer(user_question, selected_image, data)
     return jsonify({'answer': answer})
 
-
-@app.route('/api/tags', methods=['POST'])
-def tagToImage():
-    # console.log("hi")
-    print("hi")
-    userTag = request.json.get('userInput')
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_dir, 'data.json')
-    data = load_data(file_path)
-    top_3_images = getImages(userTag, data)
-    return jsonify({'images': top_3_images})
 
 if __name__ == '__main__':
     app.run(debug=True)
